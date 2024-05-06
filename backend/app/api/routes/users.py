@@ -40,10 +40,8 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
 
     count_statement = select(func.count()).select_from(User)
     count = session.exec(count_statement).one()
-
     statement = select(User).offset(skip).limit(limit)
     users = session.exec(statement).all()
-
     return UsersPublic(data=users, count=count)
 
 
@@ -169,11 +167,18 @@ def read_user_by_id(
     Get a specific user by id.
     """
     user = session.get(User, user_id)
+    # Modify below on 2024-05-03 17:36 
+    if user is None:
+        raise HTTPException(
+            status_code=404, # Not Found
+            detail="User not found")
+    # Modify above on 2024-05-03 17:36
+    
     if user == current_user:
         return user
     if not current_user.is_superuser:
         raise HTTPException(
-            status_code=403,
+            status_code=403, # Forbidden
             detail="The user doesn't have enough privileges",
         )
     return user

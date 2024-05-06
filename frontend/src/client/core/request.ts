@@ -65,7 +65,6 @@ export const getQueryString = (params: Record<string, unknown>): string => {
 
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	const encoder = config.ENCODE_PATH || encodeURI;
-
 	const path = options.url
 		.replace('{api-version}', config.VERSION)
 		.replace(/{(.*?)}/g, (substring: string, group: string) => {
@@ -75,7 +74,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 			return substring;
 		});
 
-	const url = config.BASE + path;
+	const url = config.BASE +':8000'+ path; //TODO fix this: config.BASE + path;
 	return options.query ? url + getQueryString(options.query) : url;
 };
 
@@ -180,7 +179,6 @@ export const sendRequest = async <T>(
 	axiosClient: AxiosInstance
 ): Promise<AxiosResponse<T>> => {
 	const controller = new AbortController();
-
 	let requestConfig: AxiosRequestConfig = {
 		data: body ?? formData,
 		headers,
@@ -189,7 +187,6 @@ export const sendRequest = async <T>(
 		url,
 		withCredentials: config.WITH_CREDENTIALS,
 	};
-
 	onCancel(() => controller.abort());
 
 	for (const fn of config.interceptors.request._fns) {
@@ -306,7 +303,7 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions, ax
 			const formData = getFormData(options);
 			const body = getRequestBody(options);
 			const headers = await getHeaders(config, options);
-
+			
 			if (!onCancel.isCancelled) {
 				let response = await sendRequest<T>(config, options, url, body, formData, headers, onCancel, axiosClient);
 

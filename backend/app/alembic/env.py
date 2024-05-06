@@ -3,6 +3,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from dotenv import find_dotenv, load_dotenv
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -12,6 +13,7 @@ config = context.config
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
@@ -19,14 +21,18 @@ fileConfig(config.config_file_name)
 # target_metadata = None
 
 from app.models import SQLModel  # noqa
+from app.base_models import SQLModel  # noqa
 
 target_metadata = SQLModel.metadata
+print("target_metadata",target_metadata)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+env_file = find_dotenv(".env")
+load_dotenv(env_file)
 
 def get_url():
     user = os.getenv("POSTGRES_USER", "postgres")
@@ -50,6 +56,7 @@ def run_migrations_offline():
 
     """
     url = get_url()
+        
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True, compare_type=True
     )
@@ -83,6 +90,8 @@ def run_migrations_online():
 
 
 if context.is_offline_mode():
+    print("Running migrations offline.")
     run_migrations_offline()
 else:
+    print("Running migrations online.")
     run_migrations_online()

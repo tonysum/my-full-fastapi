@@ -1,6 +1,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
+import type { ApiRequestOptions } from './core/ApiRequestOptions';
 
 import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ItemCreate,ItemPublic,ItemsPublic,ItemUpdate } from './models';
 
@@ -214,6 +215,19 @@ requestBody,
 	public static readUserMe(): CancelablePromise<UserPublic> {
 				return __request(OpenAPI, {
 			method: 'GET',
+			url: '/api/v1/users/me',
+		});
+	}
+
+	/**
+	 * Delete User Me
+	 * Delete own user.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static deleteUserMe(): CancelablePromise<Message> {
+				return __request(OpenAPI, {
+			method: 'DELETE',
 			url: '/api/v1/users/me',
 		});
 	}
